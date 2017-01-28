@@ -1,4 +1,4 @@
-# Graph-based Automated Phase Segmentation (GPhase)
+## Graph-based Automated Phase Segmentation (GPhase)
 
 Last modified 01/25/2017
 Version 1.0
@@ -18,7 +18,7 @@ GNU General Public License for more details.
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-## Prerequisites
+### Prerequisites
 
 GPhase depends on MATLAB engine api for Python:
 ```
@@ -27,7 +27,7 @@ GPhase depends on MATLAB engine api for Python:
 ```
 see https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
 
-## Usage
+### Usage
 
 gphase [OPTIONS]
 
@@ -42,12 +42,12 @@ Options:
     -k --K <float>
      threshold for merging phases (default:1.5)
 
-## Example
+### Example
 ```
 cd gphase
 python gphase.py -x ../data/FePdGa_XRD.csv -c ../data/FePdGa_composition.csv -b 0
 python gphase.py -x ../data/AlCuMo_XRD.csv -c ../data/AlCuMo_composition.csv -b 1
 ```
-## Contact me
+### Contact me
 
 If you have any questions or suggestions, please feel free to contact me. This is my email address: zxiong@email.sc.edu.
