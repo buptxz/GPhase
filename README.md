@@ -1,8 +1,8 @@
 # Graph-based Automated Phase Segmentation (GPhase)
-================================================
+
 Last modified 01/25/2017
 Version 1.0
-================================================
+
 Copyright (C) 2017 University of South Carolina
 
 This program is free software: you can redistribute it and/or modify
