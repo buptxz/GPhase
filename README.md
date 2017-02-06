@@ -52,7 +52,7 @@ python gphase.py -x ../data/AlCuMo_XRD.csv -c ../data/AlCuMo_composition.csv -b 
 If you want to learn more about how GPhase works please refer to the paper:
 
 Zheng Xiong, Yinyan He, Jason Hattrick-Simpers and Jianjun Hu. Automated Phase Segmentation for Large-Scale X-ray Diffraction Data Using Graph-based Phase Segmentation (GPhase) Algorithm. ACS Comb. Sci., 2017. DOI: 10.1021/acscombsci.6b00121
-
+http://pubs.acs.org/doi/abs/10.1021/acscombsci.6b00121
 
 ### Contact me
 
