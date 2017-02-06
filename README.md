@@ -25,7 +25,7 @@ GPhase depends on MATLAB engine api for Python:
     cd "MATLABROOT/extern/engines/python"
     python setup.py install
 ```
-see https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
+see <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html" target="_blank">https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html</a>
 
 ### Usage
 
