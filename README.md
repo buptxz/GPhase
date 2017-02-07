@@ -20,19 +20,21 @@ all copies or substantial portions of the Software.
 
 ### Prerequisites
 
-GPhase depends on MATLAB engine api for Python:
+Python, Python-tk, Scipy, Numpy, matplotlib
+
+Also, GPhase depends on MATLAB engine api for Python:
 ```
     cd "MATLABROOT/extern/engines/python"
     python setup.py install
 ```
-see https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
+see <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html" target="_blank">https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html</a>
 
 ### Usage
 
 gphase [OPTIONS]
 
 Options:
-    
+
     -x --xrd <string>
      xrd file path
     -c --comp <string>
@@ -48,6 +50,12 @@ cd gphase
 python gphase.py -x ../data/FePdGa_XRD.csv -c ../data/FePdGa_composition.csv -b 0
 python gphase.py -x ../data/AlCuMo_XRD.csv -c ../data/AlCuMo_composition.csv -b 1
 ```
+### Reference
+If you want to learn more about how GPhase works please refer to the paper:
+
+Zheng Xiong, Yinyan He, Jason Hattrick-Simpers and Jianjun Hu. Automated Phase Segmentation for Large-Scale X-ray Diffraction Data Using Graph-based Phase Segmentation (GPhase) Algorithm. ACS Comb. Sci., 2017. DOI: 10.1021/acscombsci.6b00121
+http://pubs.acs.org/doi/abs/10.1021/acscombsci.6b00121
+
 ### Contact me
 
 If you have any questions or suggestions, please feel free to contact me. This is my email address: zxiong@email.sc.edu.
