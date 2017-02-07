@@ -20,7 +20,9 @@ all copies or substantial portions of the Software.
 
 ### Prerequisites
 
-GPhase depends on MATLAB engine api for Python:
+Python, Python-tk, Scipy, Numpy, matplotlib
+
+Also, GPhase depends on MATLAB engine api for Python:
 ```
     cd "MATLABROOT/extern/engines/python"
     python setup.py install
