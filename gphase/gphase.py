@@ -222,12 +222,12 @@ if __name__ == "__main__":
     len_predicted = max(prediction)
     [figure, tax] = phase_module.ternary_figure(ternary_data)
     tax.scatter(original_comp, marker='o', c=label, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet)
-    tax.savefig("../figure/" + "labeled.png", format="png")
+    tax.savefig("../result/" + "labeled.png", format="png")
     # tax.show()
 
     [figure, tax] = phase_module.ternary_figure(ternary_data)
     tax.scatter(original_comp, marker='o', c=prediction, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet)
-    tax.savefig("../figure/" + "prediction.png", format="png")
+    tax.savefig("../result/" + "prediction.png", format="png")
     # tax.show()
 
     print "Calculation finished."
