@@ -13,7 +13,7 @@ import copy
 # def back_sub(data):
 
 if __name__ == "__main__":
-    xrd = np.genfromtxt('../data/travis.csv', delimiter=',')
+    xrd = np.genfromtxt('../data/xrd.csv', delimiter=',')
     composition = np.genfromtxt('../data/composition.csv', delimiter=',')
     two_theta = xrd[0, :]
     xrd = xrd[1:, :]
@@ -84,17 +84,17 @@ if __name__ == "__main__":
         plt.subplot(211)
         plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
         # this is the background samples
-        if sample in [207, 208, 231, 255, 278, 301, 324]:
+        if sample in [184, 207, 208, 231, 255, 278, 301, 324]:
             plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
         else:
             plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
         plt.plot(two_theta, xrd[sample])
         plt.subplot(212)
-        plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
+        # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
         # plt.plot(two_theta[440:464], xrd[sample][440:464])
-        plt.plot(two_theta, xrd_peak[sample])
+        plt.plot(two_theta[start:end], xrd_peak[sample][start:end])
         plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]))
-        plt.savefig("/home/zheng/Desktop/figure0206/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.savefig("/home/zheng/Desktop/figure0208/" + str(sample + 1) + '.png', format="png", dpi=200)
         plt.close()
 
     # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
