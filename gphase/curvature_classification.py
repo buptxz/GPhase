@@ -45,6 +45,7 @@ if __name__ == "__main__":
     xrd_peak = []
     prediction = []
     curvature = []
+    window = []
     # manually labeled two points
     for sample in xrd:
         i = start
@@ -65,13 +66,17 @@ if __name__ == "__main__":
                 i -= 1
                 j -= 1
             xrd_peak.append(sample[i:j+1])
+        window.append([i, j])
 
     x = two_theta[start:end+1]
-    for sample in xrd_peak:
-        y = sample
+    for sample_number in range(len(xrd_peak)):
+        y = xrd_peak[sample_number]
         middle = (end - start) / 2
         half_offset = (end - start) / 4
         peak_location = np.argmax(y[half_offset : middle + half_offset]) + half_offset
+        window[sample_number].append(window[sample_number][0] + peak_location - half_offset)
+        window[sample_number].append(window[sample_number][0] + peak_location)
+        window[sample_number].append(window[sample_number][0] + peak_location + half_offset)
         # peak_location = (end - start) / 2
         x1 = x[peak_location - half_offset]
         x2 = x[peak_location]
@@ -100,17 +105,18 @@ if __name__ == "__main__":
         plt.subplot(211)
         plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
         # this is the background samples
-        if sample in [184, 207, 208, 231, 255, 278, 301, 324]:
+        if sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
             plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
         else:
             plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
         plt.plot(two_theta, xrd[sample])
+        plt.scatter([two_theta[window[sample][0]], two_theta[window[sample][1]]], [xrd[sample][window[sample][0]], xrd[sample][window[sample][1]]])
         plt.subplot(212)
         # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
-        # plt.plot(two_theta[440:464], xrd[sample][440:464])
-        plt.plot(two_theta[start:end+1], xrd_peak[sample])
+        plt.plot(two_theta[window[sample][0]:window[sample][1]+1], xrd_peak[sample])
+        plt.scatter([two_theta[window[sample][2]], two_theta[window[sample][3]], two_theta[window[sample][4]]], [xrd[sample][window[sample][2]], xrd[sample][window[sample][3]], xrd[sample][window[sample][4]]])
         plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]) + " k " + str(curvature[sample]))
-        # plt.savefig("/home/zheng/Desktop/figure0208/" + str(sample + 1) + '.png', format="png", dpi=200)
-        plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.savefig("/home/zheng/Desktop/figure0216/" + str(sample + 1) + '.png', format="png", dpi=200)
+        # plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
         plt.close()
     # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
