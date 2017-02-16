@@ -77,9 +77,8 @@ if __name__ == "__main__":
         window[sample_number].append(window[sample_number][0] + peak_location - half_offset)
         window[sample_number].append(window[sample_number][0] + peak_location)
         window[sample_number].append(window[sample_number][0] + peak_location + half_offset)
-        if (sample_number == 271 or sample_number == 367):
+        if (sample_number == 271 or sample_number == 366):
             peak_location = (end - start) / 2
-        # peak_location = (end - start) / 2
         x1 = x[peak_location - half_offset]
         x2 = x[peak_location]
         x3 = x[peak_location + half_offset]
