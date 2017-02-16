@@ -82,7 +82,7 @@ if __name__ == "__main__":
         K = 2 * ((x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2)) / math.sqrt(
             ((x2 - x1) ** 2 + (y2 - y1) ** 2) * ((x3 - x2) ** 2 + (y3 - y2) ** 2) * (
             (x1 - x3) ** 2 + (y1 - y3) ** 2))
-        if (abs(K) < 0.001):
+        if (abs(K) < 0.0005):
             curvature.append(K)
             prediction.append(0)
         else:
@@ -95,22 +95,22 @@ if __name__ == "__main__":
     phase_module.result_evaluation(label, prediction)
 
     # plot all samples
-    # for sample in range(sample_number):
-        # plt.figure(figsize = (9,6), dpi = 300)
-        # plt.subplot(211)
-        # plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
-        # # this is the background samples
-        # if sample in [184, 207, 208, 231, 255, 278, 301, 324]:
-        #     plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
-        # else:
-        #     plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
-        # plt.plot(two_theta, xrd[sample])
-        # plt.subplot(212)
-        # # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
-        # # plt.plot(two_theta[440:464], xrd[sample][440:464])
-        # plt.plot(two_theta[start:end+1], xrd_peak[sample])
-        # plt.title('sample ' + str(sample + 1) + ' category ' + str(curvature[sample]))
-        # # plt.savefig("/home/zheng/Desktop/figure0208/" + str(sample + 1) + '.png', format="png", dpi=200)
-        # plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
-        # plt.close()
+    for sample in range(sample_number):
+        plt.figure(figsize = (9,6), dpi = 300)
+        plt.subplot(211)
+        plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
+        # this is the background samples
+        if sample in [184, 207, 208, 231, 255, 278, 301, 324]:
+            plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
+        else:
+            plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
+        plt.plot(two_theta, xrd[sample])
+        plt.subplot(212)
+        # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
+        # plt.plot(two_theta[440:464], xrd[sample][440:464])
+        plt.plot(two_theta[start:end+1], xrd_peak[sample])
+        plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]) + " k " + str(curvature[sample]))
+        # plt.savefig("/home/zheng/Desktop/figure0208/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.close()
     # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)

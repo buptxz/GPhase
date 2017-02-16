@@ -291,7 +291,10 @@ def result_evaluation(label, prediction):
     with open('../result/result.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile)
         for sample in range(len(prediction)):
-            spamwriter.writerow([label[sample], prediction[sample]])
+            if label[sample] == prediction[sample]:
+                spamwriter.writerow([label[sample], prediction[sample]])
+            else:
+                spamwriter.writerow([label[sample], prediction[sample], "error"])
 
 def nearest_neighbor(comp_data, neighbor_num):
     """"
