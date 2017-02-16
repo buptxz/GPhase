@@ -67,7 +67,7 @@ if __name__ == "__main__":
             curvature.append(K)
         curvature = [abs(temp) for temp in curvature]
         max_value = max(curvature)
-        if (max_value > 0.01):
+        if (max_value > 0.001):
             prediction.append(1)
         else:
             prediction.append(0)

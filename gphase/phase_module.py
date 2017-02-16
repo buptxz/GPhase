@@ -284,7 +284,14 @@ def result_evaluation(label, prediction):
     print "precision = %f" % (tp / (tp + fp))
     print "recall = %f" % (tp / (tp + fn))
     print "accuracy = %f" % ((tp + tn) / (tp + tn + fp + fn))
-    print "mcc = %f" % ((tp * tn - fp * fn) / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5))
+    if (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) == 0:
+        print "mcc = %f" % np.inf
+    else:
+        print "mcc = %f" % ((tp * tn - fp * fn) / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5))
+    with open('../result/result.csv', 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile)
+        for sample in range(len(prediction)):
+            spamwriter.writerow([label[sample], prediction[sample]])
 
 def nearest_neighbor(comp_data, neighbor_num):
     """"
