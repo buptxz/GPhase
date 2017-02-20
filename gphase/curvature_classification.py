@@ -101,23 +101,34 @@ if __name__ == "__main__":
     phase_module.result_evaluation(label, prediction)
 
     # plot all samples
-    for sample in range(sample_number):
-        plt.figure(figsize = (9,6), dpi = 300)
-        plt.subplot(211)
-        plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
-        # this is the background samples
-        if sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
-            plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
-        else:
-            plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
-        plt.plot(two_theta, xrd[sample])
-        plt.scatter([two_theta[window[sample][0]], two_theta[window[sample][1]]], [xrd[sample][window[sample][0]], xrd[sample][window[sample][1]]])
-        plt.subplot(212)
-        # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
-        plt.plot(two_theta[window[sample][0]:window[sample][1]+1], xrd_peak[sample])
-        plt.scatter([two_theta[window[sample][2]], two_theta[window[sample][3]], two_theta[window[sample][4]]], [xrd[sample][window[sample][2]], xrd[sample][window[sample][3]], xrd[sample][window[sample][4]]])
-        plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]) + " k " + str(curvature[sample]))
-        plt.savefig("/home/zheng/Desktop/figure0216/" + str(sample + 1) + '.png', format="png", dpi=200)
-        # plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
-        plt.close()
+    # for sample in range(sample_number):
+    #     plt.figure(figsize = (9,6), dpi = 300)
+    #     plt.subplot(211)
+    #     plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
+    #     # this is the background samples
+    #     if sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
+    #         plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
+    #     else:
+    #         plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
+    #     plt.plot(two_theta, xrd[sample])
+    #     plt.scatter([two_theta[window[sample][0]], two_theta[window[sample][1]]], [xrd[sample][window[sample][0]], xrd[sample][window[sample][1]]])
+    #     plt.subplot(212)
+    #     # plt.xlim(xmax = two_theta[feature_number - 1], xmin = two_theta[0])
+    #     plt.plot(two_theta[window[sample][0]:window[sample][1]+1], xrd_peak[sample])
+    #     plt.scatter([two_theta[window[sample][2]], two_theta[window[sample][3]], two_theta[window[sample][4]]], [xrd[sample][window[sample][2]], xrd[sample][window[sample][3]], xrd[sample][window[sample][4]]])
+    #     plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]) + " k " + str(curvature[sample]))
+    #     plt.savefig("/home/zheng/Desktop/figure0216/" + str(sample + 1) + '.png', format="png", dpi=200)
+    #     # plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
+    #     plt.close()
     # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
+
+    # plot for deep learning input
+    fig = plt.figure(figsize=(10, 10), dpi=100)
+    for sample in range(sample):
+        fig.set_xticks([])
+        fig.set_yticks([])
+        fig = plt.figure(figsize=(10,10),dpi=100)
+        plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
+        plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
+        plt.savefig("/home/zheng/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.close()
