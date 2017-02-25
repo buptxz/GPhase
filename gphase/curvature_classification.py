@@ -6,10 +6,11 @@ import argparse
 import os
 from argparse import RawTextHelpFormatter
 import numpy as np
-import peakdetect
+# import peakdetect
 import warnings
 import copy
 import math
+import keras
 
 # def back_sub(data):
 
@@ -69,15 +70,15 @@ if __name__ == "__main__":
         window.append([i, j])
 
     x = two_theta[start:end+1]
-    for sample_number in range(len(xrd_peak)):
-        y = xrd_peak[sample_number]
+    for sample_index in range(len(xrd_peak)):
+        y = xrd_peak[sample_index]
         middle = (end - start) / 2
         half_offset = (end - start) / 4
         peak_location = np.argmax(y[half_offset : middle + half_offset]) + half_offset
-        window[sample_number].append(window[sample_number][0] + peak_location - half_offset)
-        window[sample_number].append(window[sample_number][0] + peak_location)
-        window[sample_number].append(window[sample_number][0] + peak_location + half_offset)
-        if (sample_number == 271 or sample_number == 366):
+        window[sample_index].append(window[sample_index][0] + peak_location - half_offset)
+        window[sample_index].append(window[sample_index][0] + peak_location)
+        window[sample_index].append(window[sample_index][0] + peak_location + half_offset)
+        if (sample_index == 271 or sample_index == 366):
             peak_location = (end - start) / 2
         x1 = x[peak_location - half_offset]
         x2 = x[peak_location]
@@ -123,12 +124,11 @@ if __name__ == "__main__":
     # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
 
     # plot for deep learning input
-    fig = plt.figure(figsize=(10, 10), dpi=100)
-    for sample in range(sample):
-        fig.set_xticks([])
-        fig.set_yticks([])
+    for sample in range(sample_number):
         fig = plt.figure(figsize=(10,10),dpi=100)
+        plt.axis('off')
         plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
         plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
-        plt.savefig("/home/zheng/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
+        # plt.savefig("/home/zheng/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.savefig("D:/xiong/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
         plt.close()

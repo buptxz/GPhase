@@ -38,7 +38,7 @@ class Forest:
 
     def print_nodes(self):
         for node in self.nodes:
-            print node
+            print(node)
 
 # def create_edge(x, diff):
 #     return (x -1, x, diff[x - 1])
