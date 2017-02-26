@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import csv
 import sys
-import ternary
+import gphase.ternary
 import copy
 from math import acos, pi
-from graph import segment_graph, build_graph
+from gphase.graph import segment_graph, build_graph
 from random import random
 from scipy.spatial import Delaunay
 
@@ -143,7 +143,7 @@ def construct_neighbor(comp_data):
         y = point[1]
         z = point[2]
         original_comp.append((x,y,z))
-    xs, ys = ternary.helpers.project_sequence(original_comp, permutation=None)
+    xs, ys = gphase.ternary.helpers.project_sequence(original_comp, permutation=None)
     coordinate = []
     for num in range(len(xs)):
         coordinate.append([xs[num], ys[num]])
@@ -187,7 +187,7 @@ def ternary_figure(ternary_data):
 
     """
     [scale, position, font_size, text_content] = ternary_data
-    figure, tax = ternary.figure(scale=scale)
+    figure, tax = gphase.ternary.figure(scale=scale)
     tax.boundary(linewidth=1.5)
     tax.gridlines(multiple=20, color="blue")
     tax.left_axis_label(text_content[0], fontsize=font_size, offset = 0.12)
@@ -234,7 +234,7 @@ def graph_based_segmentation(neighbor_list, num_nodes, K, min_size, threshold):
 
     # output prediction results
     prediction = []
-    for x in xrange(num_nodes + 1):
+    for x in range(num_nodes + 1):
         prediction.append(forest.find(x))
 
     # prediction clusters rename
@@ -308,7 +308,7 @@ def nearest_neighbor(comp_data, neighbor_num):
         y = point[1]
         z = point[2]
         original_comp.append((x,y,z))
-    xs, ys = ternary.helpers.project_sequence(original_comp, permutation=None)
+    xs, ys = gphase.ternary.helpers.project_sequence(original_comp, permutation=None)
 
     for i in range(len(comp_data)):
         weight = []

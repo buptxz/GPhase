@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors
-import phase_module
+import gphase.phase_module
 import argparse
 # import matlab.engine
 import os
@@ -10,9 +10,12 @@ import numpy as np
 import warnings
 import copy
 import math
-import keras
-
-# def back_sub(data):
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Convolution2D, MaxPooling2D
+from keras.utils import np_utils
+from keras import backend as K
 
 if __name__ == "__main__":
     xrd = np.genfromtxt('../data/xrd.csv', delimiter=',')
@@ -99,7 +102,7 @@ if __name__ == "__main__":
     # background samples
     for sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
         prediction[sample] = 2
-    phase_module.result_evaluation(label, prediction)
+    gphase.phase_module.result_evaluation(label, prediction)
 
     # plot all samples
     # for sample in range(sample_number):
@@ -130,5 +133,5 @@ if __name__ == "__main__":
         plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
         plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
         # plt.savefig("/home/zheng/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
-        plt.savefig("D:/xiong/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
+        plt.savefig("D:/xiong/Desktop/figure0225/" + str(sample + 1) + '.png', format="png", dpi=200)
         plt.close()

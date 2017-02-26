@@ -117,9 +117,9 @@ def peakdetect(y_axis, x_axis = None, lookahead = 300, delta=0):
     
     #perform some checks
     if lookahead < 1:
-        raise ValueError, "Lookahead must be '1' or above in value"
+        raise(ValueError, "Lookahead must be '1' or above in value")
     if not (np.isscalar(delta) and delta >= 0):
-        raise ValueError, "delta must be a positive number"
+        raise(ValueError, "delta must be a positive number")
     
     #maxima and minima candidates are temporarily stored in
     #mx and mn respectively
@@ -601,11 +601,10 @@ def _smooth(x, window_len=11, window='hanning'):
     a string   
     """
     if x.ndim != 1:
-        raise ValueError, "smooth only accepts 1 dimension arrays."
+        raise(ValueError, "smooth only accepts 1 dimension arrays.")
 
     if x.size < window_len:
-        raise ValueError, "Input vector needs to be bigger than window size."
-    
+        raise(ValueError, "Input vector needs to be bigger than window size.")
     if window_len<3:
         return x
     
@@ -650,8 +649,8 @@ def zero_crossings(y_axis, window = 11):
     # check if zero-crossings are valid
     diff = np.diff(indices)
     if diff.std() / diff.mean() > 0.2:
-        print diff.std() / diff.mean()
-        print np.diff(indices)
+        print(diff.std() / diff.mean())
+        print(np.diff(indices))
         raise(ValueError, 
             "False zero-crossings found, indicates problem {0} or {1}".format(
             "with smoothing window", "problem with offset"))
@@ -680,9 +679,9 @@ def zero_crossings(y_axis, window = 11):
     
     
 def _test_zero():
-    _max, _min = peakdetect_zero_crossing(y,x)
+    _max, _min = peakdetect_zero_crossing(None, None)
 def _test():
-    _max, _min = peakdetect(y,x, delta=0.30)
+    _max, _min = peakdetect(None, None, delta=0.30)
     
     
 def _test_graph():
@@ -704,7 +703,7 @@ def _test_graph():
     pylab.plot(xm, ym, 'r+')
     pylab.plot(xn, yn, 'g+')
     
-    _max, _min = peak_det_bad.peakdetect(y, 0.7, x)
+    # _max, _min = peak_det_bad.peakdetect(y, 0.7, x)
     xm = [p[0] for p in _max]
     ym = [p[1] for p in _max]
     xn = [p[0] for p in _min]
