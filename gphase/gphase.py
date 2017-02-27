@@ -1,13 +1,13 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.colors
-import phase_module
+import gphase.phase_module
 import argparse
-import matlab.engine
+# import matlab.engine
 import os
 from argparse import RawTextHelpFormatter
 import numpy as np
-import peakdetect
+import gphase.peakdetect
 import warnings
 import copy
 
@@ -32,11 +32,11 @@ if __name__ == "__main__":
         eng = matlab.engine.start_matlab()
         bin_path = os.path.dirname(os.path.realpath(__file__))
         eng.cd(bin_path, nargout=0)
-        print "finding peaks... takes a few minutes..."
+        print("finding peaks... takes a few minutes...")
         xrd_peak_path = eng.peakfinder(args.xrd, nargout=1)
     else:
         xrd_peak_path = args.xrd
-        print "calculating..."
+        print("calculating...")
 
     # read data
     [xrd, two_theta, composition, label] = phase_module.read_data(xrd_peak_path, args.comp)
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     num_nodes = sample_number - 1
     min_size = 1
     [forest, prediction] = phase_module.graph_based_segmentation(neighbor_list, num_nodes, args.K, min_size, phase_module.threshold)
-    print 'Number of components: %d' % forest.num_sets
+    print('Number of components: %d' % forest.num_sets)
 
     # Evaluate results
     phase_module.result_evaluation(label, prediction)
@@ -230,4 +230,4 @@ if __name__ == "__main__":
     tax.savefig("../figure/" + "prediction.png", format="png")
     # tax.show()
 
-    print "Calculation finished."
+    print("Calculation finished.")

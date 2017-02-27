@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import csv
 import sys
-import gphase.ternary
+# import ternary
 import copy
 from math import acos, pi
 from gphase.graph import segment_graph, build_graph
