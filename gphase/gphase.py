@@ -1,13 +1,13 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.colors
-import gphase.phase_module
+from .phase_module import *
 import argparse
 # import matlab.engine
 import os
 from argparse import RawTextHelpFormatter
 import numpy as np
-import gphase.peakdetect
+from .peakdetect import *
 import warnings
 import copy
 

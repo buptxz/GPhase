@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors
-import gphase.phase_module
+# import gphase.phase_module
 import argparse
 import os
 from argparse import RawTextHelpFormatter
@@ -18,12 +18,12 @@ label = composition[:, 3]
 sample_number = len(xrd)
 feature_number = len(xrd[0])
 
-# std = np.std(xrd, axis=0)
-# std = np.std(xrd.tolist(), axis=0)
-# std = xrd[10]
-# std = std.tolist()
-# plt.plot(two_theta[1:-2], std[1:-2])
-# plt.show()
+std = np.std(xrd, axis=0)
+std = np.std(xrd.tolist(), axis=0)
+
+std = std.tolist()
+plt.plot(two_theta[1:-2], xrd[89, 1:-2])
+plt.show()
 # std = phase_module.back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
 #
 # for i in range(feature_number):

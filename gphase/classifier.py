@@ -37,7 +37,7 @@ data/
             cat001.jpg
             cat002.jpg
             ...
-```
+
 '''
 
 from keras.preprocessing.image import ImageDataGenerator
@@ -49,13 +49,13 @@ from keras.layers import Activation, Dropout, Flatten, Dense
 # dimensions of our images.
 img_width, img_height = 100, 100
 
-train_data_dir = 'D:/Users/xiong/Desktop/data/train'
-validation_data_dir = 'D:/Users/xiong/Desktop/data/validation'
+train_data_dir = 'D:/xiong/Desktop/data/train'
+validation_data_dir = 'D:/xiong/Desktop/data/validation'
 nb_train_samples = 329
 nb_validation_samples = 102
 nb_epoch = 10
 
-
+# input shape
 model = Sequential()
 model.add(Convolution2D(32, 3, 3, input_shape=(3, img_width, img_height)))
 model.add(Activation('relu'))
@@ -76,9 +76,8 @@ model.add(Dropout(0.5))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
-model.compile(loss='binary_crossentropy',
-              optimizer='rmsprop',
-              metrics=['accuracy'])
+# compilation
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # this is the augmentation configuration we will use for training
 train_datagen = ImageDataGenerator(
@@ -91,12 +90,16 @@ train_datagen = ImageDataGenerator(
 # only rescaling
 test_datagen = ImageDataGenerator(rescale=1./255)
 
+# this is a generator that will read pictures found in
+# subfolers of 'data/train', and indefinitely generate
+# batches of augmented image data
 train_generator = train_datagen.flow_from_directory(
         train_data_dir,
         target_size=(img_width, img_height),
         batch_size=32,
         class_mode='binary')
 
+# this is a similar generator, for validation data
 validation_generator = test_datagen.flow_from_directory(
         validation_data_dir,
         target_size=(img_width, img_height),
@@ -110,4 +113,4 @@ model.fit_generator(
         validation_data=validation_generator,
         nb_val_samples=nb_validation_samples)
 
-# model.load_weights('first_try.h5')
+model.save_weights('first_try.h5')
