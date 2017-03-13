@@ -32,11 +32,11 @@ if __name__ == "__main__":
         eng = matlab.engine.start_matlab()
         bin_path = os.path.dirname(os.path.realpath(__file__))
         eng.cd(bin_path, nargout=0)
-        print "finding peaks... takes a few minutes..."
+        print("finding peaks... takes a few minutes...")
         xrd_peak_path = eng.peakfinder(args.xrd, nargout=1)
     else:
         xrd_peak_path = args.xrd
-        print "calculating..."
+        print("calculating...")
 
     # read data
     [xrd, two_theta, composition, label] = phase_module.read_data(xrd_peak_path, args.comp)
@@ -230,4 +230,4 @@ if __name__ == "__main__":
     tax.savefig("../result/" + "prediction.png", format="png")
     # tax.show()
 
-    print "Calculation finished."
+    print("Calculation finished.")
