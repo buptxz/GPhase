@@ -212,7 +212,7 @@ if __name__ == "__main__":
     num_nodes = sample_number - 1
     min_size = 1
     [forest, prediction] = phase_module.graph_based_segmentation(neighbor_list, num_nodes, args.K, min_size, phase_module.threshold)
-    print 'Number of components: %d' % forest.num_sets
+    print('Number of components: %d' % forest.num_sets)
 
     # Evaluate results
     phase_module.result_evaluation(label, prediction)
