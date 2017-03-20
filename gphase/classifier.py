@@ -46,18 +46,20 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
 import numpy as np
-from scipy.misc import imread, imresize
+# from scipy.misc import imread, imresize
 
 
 # dimensions of our images.
 img_width, img_height = 100, 100
 
-train_data_dir = 'D:/xiong/Desktop/data/train'
-validation_data_dir = 'D:/xiong/Desktop/data/train'
-nb_train_samples = 420
-nb_validation_samples = 420
-epochs = 1
-batch_size = 20
+# train_data_dir = 'D:/xiong/Desktop/data/train'
+# validation_data_dir = 'D:/xiong/Desktop/data/train'
+train_data_dir = '/home/zheng/Desktop/data/train'
+validation_data_dir = '/home/zheng/Desktop/data/train'
+nb_train_samples = 430
+nb_validation_samples = 430
+epochs = 50
+batch_size = 10
 
 # input shape
 if K.image_data_format() == 'channels_first':
@@ -119,7 +121,7 @@ model.fit_generator(
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size)
 
-model.save_weights('first_try.h5')
+# model.save_weights('first_try.h5py')
 
 # test_data_dir = 'D:/xiong/Desktop/test/'
 # test_data = ImageDataGenerator(rescale=1. / 255)

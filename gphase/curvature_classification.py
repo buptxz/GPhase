@@ -1,52 +1,10 @@
 import matplotlib.pyplot as plt
-from phase_module import back_sub
+from phase_module import back_sub, result_evaluation
 import numpy as np
 import math
 import csv
 from sklearn.metrics import accuracy_score, precision_score, recall_score, matthews_corrcoef, precision_recall_curve
-
-def result_evaluation(label, prediction):
-    """
-    Cluster result evaluation.
-
-    """
-    tp = 0.0
-    tn = 0.0
-    fp = 0.0
-    fn = 0.0
-    truth = 0.0
-    classify = 0.0
-    for i in range(len(label) - 1):
-        for j in range(i + 1, len(label)):
-            if label[i] == label[j] and prediction[i] == prediction[j]:
-                tp += 1
-            if label[i] != label[j] and prediction[i] != prediction[j]:
-                tn += 1
-            if label[i] == label[j] and prediction[i] != prediction[j]:
-                fn += 1
-            if label[i] != label[j] and prediction[i] == prediction[j]:
-                fp += 1
-            if label[i] == label[j]:
-                truth += 1
-            if prediction[i] == prediction[j]:
-                classify += 1
-    # Calculate precision and recall
-    print("precision = %f" % (tp / (tp + fp)))
-    print("recall = %f" % (tp / (tp + fn)))
-    print("accuracy = %f" % ((tp + tn) / (tp + tn + fp + fn)))
-    if (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) == 0:
-        print("mcc = %f" % np.inf)
-    else:
-        print("mcc = %f" % ((tp * tn - fp * fn) / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5)))
-    # save result into a csv file
-    # with open('../result/result.csv', 'wb') as csvfile:
-    #     spamwriter = csv.writer(csvfile)
-    #     for sample in range(len(prediction)):
-    #         if label[sample] == prediction[sample]:
-    #             spamwriter.writerow([label[sample], prediction[sample]])
-    #         else:
-    #             spamwriter.writerow([label[sample], prediction[sample], "error"])
-
+from scipy.misc import imread, imresize
 
 xrd = np.genfromtxt('../data/xrd.csv', delimiter=',')
 composition = np.genfromtxt('../data/composition.csv', delimiter=',')
@@ -56,25 +14,23 @@ label = composition[:, 3]
 sample_number = len(xrd)
 feature_number = len(xrd[0])
 
-# hand mark start and end point, inclusive
-start = 438
-end = 466
-
 std = np.std(xrd, axis=0)
 
 # plot standard deviation curve
 plt.plot(two_theta[1:-2], std[1:-2])
-plt.scatter(two_theta[start], std[start])
-plt.scatter(two_theta[end], std[end])
+# plt.scatter(two_theta[start], std[start])
+# plt.scatter(two_theta[end], std[end])
 # plt.savefig("../figure/deviation.png", dpi=500)
 plt.show()
 
+# Background subtraction by curve fitting
 std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
 
 for i in range(feature_number):
     if std[i] < 0:
         std[i] = 0
 
+# Looking for the foot of max peak
 max_value = max(std[2:-2])
 max_index = list(std).index(max_value)
 start = max_index
@@ -112,7 +68,7 @@ for sample in xrd:
     else:
         while sample[i] < sample[j]:
             i += 1
-            j +=1
+            j += 1
         if abs(sample[i - 1] - sample[j - 1]) < abs(sample[i] - sample[j]):
             i -= 1
             j -= 1
@@ -121,8 +77,11 @@ for sample in xrd:
 
 x = two_theta[start:end+1]
 new_label = []
+sample_numbering = []
 for sample_index in range(len(xrd_peak)):
     if sample_index not in [162, 184, 207, 208, 231, 232, 255, 278, 301, 324]:
+    # if sample_index not in []:
+        sample_numbering.append(sample_index)
         new_label.append(label[sample_index])
         y = xrd_peak[sample_index]
         middle = (int) ((end - start) / 2)
@@ -154,13 +113,21 @@ for sample_index in range(len(xrd_peak)):
 #     prediction[sample] = 2
 
 result_evaluation(new_label, prediction)
+# save result into a csv file
+with open('../result/result.csv', 'w') as csvfile:
+    spamwriter = csv.writer(csvfile)
+    for sample in range(len(prediction)):
+        if label[sample] == prediction[sample]:
+            spamwriter.writerow([sample_numbering[sample], label[sample], prediction[sample]])
+        else:
+            spamwriter.writerow([sample_numbering[sample], label[sample], prediction[sample], "error"])
 # print("accuracy = ", accuracy_score(label, prediction))
 # print("precision = ", precision_score(label, prediction))
 # print("recall = ", recall_score(label, prediction))
 # print("mcc = ", matthews_corrcoef(label, prediction))
 # precision_recall_curve(label, prediction)
 
-# plot all samples
+## plot all samples
 # for sample in range(sample_number):
 #     plt.figure(figsize = (9,6), dpi = 300)
 #     plt.subplot(211)
@@ -183,16 +150,32 @@ result_evaluation(new_label, prediction)
 # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
 
 # plot for deep learning input
+x_data = np.empty([len(prediction), 100, 100])
+y_data = np.empty(len(prediction))
+current_index = 0
 for sample in range(sample_number):
     fig = plt.figure(figsize=(1,1))
     plt.axis('off')
     plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
-    plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
-    plt.savefig("D:/xiong/Desktop/test/" + str(sample + 1) + '.png', format="png")
+    plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample], 'k')
+    plt.savefig("/home/zheng/Desktop/figure0320/" + str(sample + 1) + '.png', format="png")
+    plt.close()
+    if label[sample] == 0 or label[sample] == 1:
+        y_data[current_index] = label[sample]
+        img = imread("/home/zheng/Desktop/figure0320/" + str(sample + 1) + '.png', mode='P')
+        # img = imresize(img,(100,100))
+        # img = np.reshape(img, 10000)
+        x_data[current_index] = img
+        current_index += 1
+
+
     # if label[sample] == 0:
     #     plt.savefig("D:/Users/xiong/Desktop/data/train/0/" + str(sample + 1) + '.png', format="png")
     #     plt.savefig("D:/Users/xiong/Desktop/data/validation/0/" + str(sample + 1) + '.png', format="png")
     # elif label[sample] == 1:
     #     plt.savefig("D:/Users/xiong/Desktop/data/train/1/" + str(sample + 1) + '.png', format="png")
     #     plt.savefig("D:/Users/xiong/Desktop/data/validation/1/" + str(sample + 1) + '.png', format="png")
-    plt.close()
+x_data = x_data.astype(np.uint8)
+y_data = y_data.astype(np.uint8)
+np.save("../data/x_data.npy", x_data)
+np.save("../data/y_data.npy", y_data)

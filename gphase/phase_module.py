@@ -289,7 +289,7 @@ def result_evaluation(label, prediction):
     #     print "mcc = %f" % np.inf
     # else:
     #     print "mcc = %f" % ((tp * tn - fp * fn) / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5))
-    with open('../result/result.csv', 'wb') as csvfile:
+    with open('../result/result.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile)
         for sample in range(len(prediction)):
             if label[sample] == prediction[sample]:
