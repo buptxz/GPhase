@@ -42,30 +42,39 @@ data/
 
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Convolution2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
+from keras import backend as K
+import numpy as np
+from scipy.misc import imread, imresize
 
 
 # dimensions of our images.
 img_width, img_height = 100, 100
 
 train_data_dir = 'D:/xiong/Desktop/data/train'
-validation_data_dir = 'D:/xiong/Desktop/data/validation'
-nb_train_samples = 329
-nb_validation_samples = 102
-nb_epoch = 10
+validation_data_dir = 'D:/xiong/Desktop/data/train'
+nb_train_samples = 420
+nb_validation_samples = 420
+epochs = 1
+batch_size = 20
 
 # input shape
+if K.image_data_format() == 'channels_first':
+    input_shape = (3, img_width, img_height)
+else:
+    input_shape = (img_width, img_height, 3)
+
 model = Sequential()
-model.add(Convolution2D(32, 3, 3, input_shape=(3, img_width, img_height)))
+model.add(Conv2D(32, (3, 3), input_shape=input_shape))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Convolution2D(32, 3, 3))
+model.add(Conv2D(32, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Convolution2D(64, 3, 3))
+model.add(Conv2D(64, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
@@ -76,41 +85,69 @@ model.add(Dropout(0.5))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
-# compilation
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='binary_crossentropy',
+              optimizer='rmsprop',
+              metrics=['accuracy'])
 
 # this is the augmentation configuration we will use for training
 train_datagen = ImageDataGenerator(
-        rescale=1./255,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True)
+    rescale=1. / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
 
 # this is the augmentation configuration we will use for testing:
 # only rescaling
-test_datagen = ImageDataGenerator(rescale=1./255)
+test_datagen = ImageDataGenerator(rescale=1. / 255)
 
-# this is a generator that will read pictures found in
-# subfolers of 'data/train', and indefinitely generate
-# batches of augmented image data
 train_generator = train_datagen.flow_from_directory(
-        train_data_dir,
-        target_size=(img_width, img_height),
-        batch_size=32,
-        class_mode='binary')
+    train_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
 
-# this is a similar generator, for validation data
 validation_generator = test_datagen.flow_from_directory(
-        validation_data_dir,
-        target_size=(img_width, img_height),
-        batch_size=32,
-        class_mode='binary')
+    validation_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    class_mode='binary')
 
 model.fit_generator(
-        train_generator,
-        samples_per_epoch=nb_train_samples,
-        nb_epoch=nb_epoch,
-        validation_data=validation_generator,
-        nb_val_samples=nb_validation_samples)
+    train_generator,
+    steps_per_epoch=nb_train_samples // batch_size,
+    epochs=epochs,
+    validation_data=validation_generator,
+    validation_steps=nb_validation_samples // batch_size)
 
 model.save_weights('first_try.h5')
+
+# test_data_dir = 'D:/xiong/Desktop/test/'
+# test_data = ImageDataGenerator(rescale=1. / 255)
+# test_generator = test_data.flow_from_directory(
+#     test_data_dir,
+#     target_size=(img_width, img_height),
+#     batch_size=batch_size,
+#     class_mode=None,
+#     shuffle=False)
+# # test_data = []
+# # for i in range(431):
+# #     img = imread('D:/xiong/Desktop/test/' + str(i + 1) + '.png', mode='RGB')
+# #     # img = imresize(img,(100,100))
+# #     img = np.reshape(img,[1,100,100,3])
+# #     test_data.append(img)
+#
+# print(model.predict_generator(test_generator, steps=441))
+
+datagen = ImageDataGenerator(rescale=1. / 255)
+generator = datagen.flow_from_directory(
+        train_data_dir,
+        target_size=(img_width, img_height),
+        batch_size=batch_size,
+        class_mode=None,
+        shuffle=False)
+bottleneck_features_train = model.predict_generator(
+    generator, nb_train_samples // batch_size)
+print(bottleneck_features_train.size)
+print(bottleneck_features_train)
+np.save(open('bottleneck_features_train.npy', 'w'),
+        bottleneck_features_train)

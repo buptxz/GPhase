@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-# import gphase.phase_module
+from phase_module import back_sub
 import numpy as np
 import math
 import csv
@@ -30,13 +30,22 @@ def result_evaluation(label, prediction):
                 truth += 1
             if prediction[i] == prediction[j]:
                 classify += 1
-    with open('../result/result.csv', 'wb') as csvfile:
-        spamwriter = csv.writer(csvfile)
-        for sample in range(len(prediction)):
-            if label[sample] == prediction[sample]:
-                spamwriter.writerow([label[sample], prediction[sample]])
-            else:
-                spamwriter.writerow([label[sample], prediction[sample], "error"])
+    # Calculate precision and recall
+    print("precision = %f" % (tp / (tp + fp)))
+    print("recall = %f" % (tp / (tp + fn)))
+    print("accuracy = %f" % ((tp + tn) / (tp + tn + fp + fn)))
+    if (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) == 0:
+        print("mcc = %f" % np.inf)
+    else:
+        print("mcc = %f" % ((tp * tn - fp * fn) / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5)))
+    # save result into a csv file
+    # with open('../result/result.csv', 'wb') as csvfile:
+    #     spamwriter = csv.writer(csvfile)
+    #     for sample in range(len(prediction)):
+    #         if label[sample] == prediction[sample]:
+    #             spamwriter.writerow([label[sample], prediction[sample]])
+    #         else:
+    #             spamwriter.writerow([label[sample], prediction[sample], "error"])
 
 
 xrd = np.genfromtxt('../data/xrd.csv', delimiter=',')
@@ -52,25 +61,42 @@ start = 438
 end = 466
 
 std = np.std(xrd, axis=0)
+
 # plot standard deviation curve
-# plt.plot(two_theta[1:-2], std[1:-2])
-# plt.scatter(two_theta[start], std[start])
-# plt.scatter(two_theta[end], std[end])
+plt.plot(two_theta[1:-2], std[1:-2])
+plt.scatter(two_theta[start], std[start])
+plt.scatter(two_theta[end], std[end])
 # plt.savefig("../figure/deviation.png", dpi=500)
-# plt.show()
-# std = phase_module.back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
-#
-# for i in range(feature_number):
-#     if std[i] < 0:
-#         std[i] = 0
-# # _max, _min = peakdetect.peakdetect(std, range(feature_number), lookahead=10, delta=0.35)
-# plt.plot(two_theta[1:-2], std[1:-2])
-# plt.show()
+plt.show()
+
+std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
+
+for i in range(feature_number):
+    if std[i] < 0:
+        std[i] = 0
+
+max_value = max(std[2:-2])
+max_index = list(std).index(max_value)
+start = max_index
+end = max_index
+while std[start] != 0:
+    start -= 1
+while std[end] != 0:
+    end += 1
+print(start)
+print(end)
+
+# _max, _min = peakdetect.peakdetect(std, range(feature_number), lookahead=10, delta=0.35)
+plt.plot(two_theta[2:-2], std[2:-2])
+plt.scatter(two_theta[start], std[start])
+plt.scatter(two_theta[end], std[end])
+plt.show()
 
 xrd_peak = []
 prediction = []
 curvature = []
 window = []
+
 # manually labeled two points
 for sample in xrd:
     i = start
@@ -94,39 +120,43 @@ for sample in xrd:
     window.append([i, j])
 
 x = two_theta[start:end+1]
+new_label = []
 for sample_index in range(len(xrd_peak)):
-    y = xrd_peak[sample_index]
-    middle = (end - start) / 2
-    half_offset = (end - start) / 4
-    peak_location = np.argmax(y[half_offset : middle + half_offset]) + half_offset
-    window[sample_index].append(window[sample_index][0] + peak_location - half_offset)
-    window[sample_index].append(window[sample_index][0] + peak_location)
-    window[sample_index].append(window[sample_index][0] + peak_location + half_offset)
-    if (sample_index == 271 or sample_index == 366):
-        peak_location = (end - start) / 2
-    x1 = x[peak_location - half_offset]
-    x2 = x[peak_location]
-    x3 = x[peak_location + half_offset]
-    y1 = y[peak_location - half_offset]
-    y2 = y[peak_location]
-    y3 = y[peak_location + half_offset]
-    K = 2 * ((x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2)) / math.sqrt(
-        ((x2 - x1) ** 2 + (y2 - y1) ** 2) * ((x3 - x2) ** 2 + (y3 - y2) ** 2) * (
-        (x1 - x3) ** 2 + (y1 - y3) ** 2))
-    if (abs(K) < 0.0005):
-        curvature.append(K)
-        prediction.append(0)
-    else:
-        curvature.append(K)
-        prediction.append(1)
+    if sample_index not in [162, 184, 207, 208, 231, 232, 255, 278, 301, 324]:
+        new_label.append(label[sample_index])
+        y = xrd_peak[sample_index]
+        middle = (int) ((end - start) / 2)
+        half_offset = (int) ((end - start) / 4)
+        peak_location = np.argmax(y[half_offset : (middle + half_offset)]) + half_offset
+        window[sample_index].append(window[sample_index][0] + peak_location - half_offset)
+        window[sample_index].append(window[sample_index][0] + peak_location)
+        window[sample_index].append(window[sample_index][0] + peak_location + half_offset)
+        if (sample_index == 271 or sample_index == 366):
+            peak_location = int((end - start) / 2)
+        x1 = x[peak_location - half_offset]
+        x2 = x[peak_location]
+        x3 = x[peak_location + half_offset]
+        y1 = y[peak_location - half_offset]
+        y2 = y[peak_location]
+        y3 = y[peak_location + half_offset]
+        K = 2 * ((x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2)) / math.sqrt(
+            ((x2 - x1) ** 2 + (y2 - y1) ** 2) * ((x3 - x2) ** 2 + (y3 - y2) ** 2) * (
+            (x1 - x3) ** 2 + (y1 - y3) ** 2))
+        if (abs(K) < 0.0005):
+            curvature.append(K)
+            prediction.append(0)
+        else:
+            curvature.append(K)
+            prediction.append(1)
 # print(prediction)
 # background samples
-for sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
-    prediction[sample] = 2
-# result_evaluation(label, prediction)
-print("accuracy = ", accuracy_score(label, prediction))
-print("precision = ", precision_score(label, prediction))
-print("recall = ", recall_score(label, prediction))
+# for sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
+#     prediction[sample] = 2
+
+result_evaluation(new_label, prediction)
+# print("accuracy = ", accuracy_score(label, prediction))
+# print("precision = ", precision_score(label, prediction))
+# print("recall = ", recall_score(label, prediction))
 # print("mcc = ", matthews_corrcoef(label, prediction))
 # precision_recall_curve(label, prediction)
 
@@ -153,16 +183,16 @@ print("recall = ", recall_score(label, prediction))
 # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
 
 # plot for deep learning input
-# for sample in range(sample_number):
-#     fig = plt.figure(figsize=(1,1))
-#     plt.axis('off')
-#     plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
-#     plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
-#     # plt.savefig("/home/zheng/Desktop/figure0220/" + str(sample + 1) + '.png', format="png", dpi=200)
-#     if label[sample] == 0:
-#         plt.savefig("D:/Users/xiong/Desktop/data/train/0/" + str(sample + 1) + '.png', format="png")
-#         plt.savefig("D:/Users/xiong/Desktop/data/validation/0/" + str(sample + 1) + '.png', format="png")
-#     elif label[sample] == 1:
-#         plt.savefig("D:/Users/xiong/Desktop/data/train/1/" + str(sample + 1) + '.png', format="png")
-#         plt.savefig("D:/Users/xiong/Desktop/data/validation/1/" + str(sample + 1) + '.png', format="png")
-#     plt.close()
+for sample in range(sample_number):
+    fig = plt.figure(figsize=(1,1))
+    plt.axis('off')
+    plt.xlim(xmax=two_theta[window[sample]][1], xmin=two_theta[window[sample]][0])
+    plt.plot(two_theta[window[sample][0]:window[sample][1] + 1], xrd_peak[sample])
+    plt.savefig("D:/xiong/Desktop/test/" + str(sample + 1) + '.png', format="png")
+    # if label[sample] == 0:
+    #     plt.savefig("D:/Users/xiong/Desktop/data/train/0/" + str(sample + 1) + '.png', format="png")
+    #     plt.savefig("D:/Users/xiong/Desktop/data/validation/0/" + str(sample + 1) + '.png', format="png")
+    # elif label[sample] == 1:
+    #     plt.savefig("D:/Users/xiong/Desktop/data/train/1/" + str(sample + 1) + '.png', format="png")
+    #     plt.savefig("D:/Users/xiong/Desktop/data/validation/1/" + str(sample + 1) + '.png', format="png")
+    plt.close()

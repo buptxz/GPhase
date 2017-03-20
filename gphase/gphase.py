@@ -1,7 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.colors
-from .phase_module import *
+import gphase.phase_module
 import argparse
 # import matlab.engine
 import os

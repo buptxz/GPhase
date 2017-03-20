@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import csv
 import sys
-# import ternary
+from ternary import ternary_axes_subplot, helpers
 import copy
 from math import acos, pi
-from gphase.graph import segment_graph, build_graph
-from random import random
 from scipy.spatial import Delaunay
+from graph import segment_graph, build_graph
+from random import random
+
 
 def threshold(size, const):
     return const / size
@@ -41,8 +42,8 @@ def back_sub(data, neighbor, threshold, fitting_degree, if_plot, two_theta=None)
 
     """
     feature_number = len(data)
-    x = range(feature_number)
-    y = copy.deepcopy(data)
+    x = list(range(feature_number))
+    y = list(copy.deepcopy(data))
 
     # Calculate difference between spectrum points
     y_diff = [0] * feature_number
@@ -143,7 +144,7 @@ def construct_neighbor(comp_data):
         y = point[1]
         z = point[2]
         original_comp.append((x,y,z))
-    xs, ys = gphase.ternary.helpers.project_sequence(original_comp, permutation=None)
+    xs, ys = helpers.project_sequence(original_comp, permutation=None)
     coordinate = []
     for num in range(len(xs)):
         coordinate.append([xs[num], ys[num]])
@@ -187,7 +188,7 @@ def ternary_figure(ternary_data):
 
     """
     [scale, position, font_size, text_content] = ternary_data
-    figure, tax = gphase.ternary.figure(scale=scale)
+    figure, tax = ternary_axes_subplot.figure(scale=scale)
     tax.boundary(linewidth=1.5)
     tax.gridlines(multiple=20, color="blue")
     tax.left_axis_label(text_content[0], fontsize=font_size, offset = 0.12)
@@ -308,7 +309,7 @@ def nearest_neighbor(comp_data, neighbor_num):
         y = point[1]
         z = point[2]
         original_comp.append((x,y,z))
-    xs, ys = gphase.ternary.helpers.project_sequence(original_comp, permutation=None)
+    xs, ys = ternary.helpers.project_sequence(original_comp, permutation=None)
 
     for i in range(len(comp_data)):
         weight = []
