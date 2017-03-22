@@ -17,7 +17,7 @@ from sklearn.model_selection import StratifiedKFold
 seed = 7
 np.random.seed(seed)
 
-batch_size = 30
+batch_size = 20
 num_classes = 2
 epochs = 10
 
