@@ -6,13 +6,12 @@ Gets to 99.25% test accuracy after 12 epochs
 
 from __future__ import print_function
 import keras
-from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 import numpy as np
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 # fix random seed for reproducibility
 seed = 7
@@ -38,23 +37,7 @@ else:
     x_data = x_data.reshape(x_data.shape[0], img_rows, img_cols, 1)
     input_shape = (img_rows, img_cols, 1)
 
-# x_data = x_data.astype('float32')
-# x_data /= 255
-# y_data = keras.utils.to_categorical(y_data, num_classes)
-
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=seed)
-
-# # the data, shuffled and split between train and test sets
-# (x_train, y_train), (x_test, y_test) = mnist.load_data()
-#
-# if K.image_data_format() == 'channels_first':
-#     x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-#     x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
-#     input_shape = (1, img_rows, img_cols)
-# else:
-#     x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-#     x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-#     input_shape = (img_rows, img_cols, 1)
 
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
