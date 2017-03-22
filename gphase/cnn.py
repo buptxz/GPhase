@@ -71,6 +71,6 @@ model.fit(x_train, y_train, validation_data=(x_test, y_test), batch_size=batch_s
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-model.save('my_model.h5')
+model.save('my_model.h5py')
 # output = model.predict(x_data)
 # print(np.argmax(output, axis=1))
