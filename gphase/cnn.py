@@ -19,7 +19,7 @@ np.random.seed(seed)
 
 batch_size = 20
 num_classes = 2
-epochs = 10
+epochs = 15
 
 # input image dimensions
 img_rows, img_cols = 100, 100

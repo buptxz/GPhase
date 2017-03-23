@@ -19,7 +19,7 @@ np.random.seed(seed)
 
 batch_size = 20
 num_classes = 2
-epochs = 10
+epochs = 15
 
 # input image dimensions
 img_rows, img_cols = 100, 100
@@ -45,7 +45,7 @@ print(x_data.shape[0], 'data samples')
 y_data = keras.utils.to_categorical(y_data, num_classes)
 
 # define 10-fold cross validation test harness
-k_fold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+k_fold = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
 cv_scores = []
 
 for train, test in k_fold.split(x_data, y_data_original):
@@ -65,8 +65,9 @@ for train, test in k_fold.split(x_data, y_data_original):
                   optimizer=keras.optimizers.Adadelta(),
                   metrics=['accuracy'])
 
-    model.fit(x_data[train], y_data[train], batch_size=batch_size, epochs=epochs, verbose=1)
+    model.fit(x_data[train], y_data[train], batch_size=batch_size, epochs=epochs, verbose=0)
     score = model.evaluate(x_data[test], y_data[test], verbose=0)
     print("%s: %.2f%%" % (model.metrics_names[1], score[1] * 100))
     cv_scores.append(score[1] * 100)
+    K.clear_session()
 print("%.2f%% (+/- %.2f%%)" % (np.mean(cv_scores), np.std(cv_scores)))
