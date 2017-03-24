@@ -140,19 +140,19 @@ with open('../result/result.csv', 'w') as csv_file:
             spamwriter.writerow([label[sample_index], prediction[sample_index], "error"])
 
 # Prepare data for deep learning input
-x_data = np.empty([len(prediction), 100, 100])
-y_data = np.empty(len(prediction))
+x_data = np.empty([len(cnn_set), 100, 100])
+y_data = np.empty(len(cnn_set))
 current_index = 0
 for sample_index in range(sample_number):
     fig = plt.figure(figsize=(1,1))
     plt.axis('off')
     plt.xlim(xmin=two_theta[window[sample_index]][0], xmax=two_theta[window[sample_index]][1])
     plt.plot(two_theta[window[sample_index][0]:window[sample_index][1] + 1], xrd_peak[sample_index], 'k')
-    plt.savefig("/home/zheng/Desktop/figure0320/" + str(sample_index + 1) + '.png', format="png")
+    plt.savefig("./figure/" + str(sample_index + 1) + '.png', format="png")
     plt.close()
     if label[sample_index] == 0 or label[sample_index] == 1:
         y_data[current_index] = label[sample_index]
-        img = imread("/home/zheng/Desktop/figure0320/" + str(sample_index + 1) + '.png', mode='P')
+        img = imread("./figure/" + str(sample_index + 1) + '.png', mode='P')
         # img = imresize(img,(100,100))
         # img = np.reshape(img, 10000)
         x_data[current_index] = img

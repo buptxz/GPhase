@@ -17,9 +17,9 @@ from sklearn.model_selection import train_test_split
 seed = 7
 np.random.seed(seed)
 
-batch_size = 20
+batch_size = 15
 num_classes = 2
-epochs = 15
+epochs = 20
 
 # input image dimensions
 img_rows, img_cols = 100, 100
@@ -72,5 +72,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 model.save('my_model.h5py')
-# output = model.predict(x_data)
-# print(np.argmax(output, axis=1))
+output = model.predict(x_data)
+output = np.argmax(output, axis=1)
+for i in output:
+    print(i)
