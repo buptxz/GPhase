@@ -11,8 +11,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, matth
 from scipy.misc import imread, imresize
 
 # read data set
-xrd = np.genfromtxt('../data/xrd.csv', delimiter=',')
-composition = np.genfromtxt('../data/composition.csv', delimiter=',')
+xrd = np.genfromtxt('../data/xrd_new.csv', delimiter=',')
+composition = np.genfromtxt('../data/composition_new.csv', delimiter=',')
 two_theta = xrd[0, :]
 xrd = xrd[1:, :]
 label = composition[:, 3]
@@ -23,7 +23,8 @@ feature_number = len(xrd[0])
 std = np.std(xrd, axis=0)
 
 # plot standard deviation curve
-plt.plot(two_theta[1:-2], std[1:-2])
+plt.plot(two_theta[50:-2], std[50:-2])
+plt.title("standard deviation figure")
 # plt.scatter(two_theta[start], std[start])
 # plt.scatter(two_theta[end], std[end])
 # plt.savefig("../figure/deviation.png", dpi=500)
@@ -38,7 +39,7 @@ for i in range(feature_number):
         std[i] = 0
 
 # Looking for the foot of max peak
-max_value = max(std[2:-2])
+max_value = max(std[50:-2])
 max_index = list(std).index(max_value)
 start = max_index
 end = max_index
@@ -50,6 +51,7 @@ print("left foot location: ", start)
 print("right foot location: ", end)
 
 # plot the curve after removing background
+plt.title("curve after removing background")
 plt.plot(two_theta[2:-2], std[2:-2])
 plt.scatter(two_theta[start], std[start])
 plt.scatter(two_theta[end], std[end])
@@ -71,16 +73,15 @@ xrd_peak = []
 
 # Adjust the window location to the center of the peak
 for sample_index in range(sample_number):
+    sample = xrd[sample_index]
     i = start
     j = end
-    peak_loc = np.argmax(xrd[sample_index][i:j+1]) + i
-    sample = xrd[sample_index]
-    if peak_loc - i > 5 and j - peak_loc > 5:
-        xrd_peak.append(sample[peak_loc - (j - i) // 2:peak_loc + (j - i) // 2 + 1])
-        window.append([peak_loc - (j - i) // 2, peak_loc + (j - i) // 2])
 
-    else:
-
+    max_index = np.argmax(sample[i:j+1]) + i
+    if max_index - i > 5 and j - max_index > 5:
+        xrd_peak.append(sample[max_index - (j - i) // 2 : max_index + (j - i) // 2 + 1])
+        window.append([max_index - (j - i) // 2, max_index + (j - i) // 2])
+    else :
         if sample[i] > sample[j]:
             while sample[i] > sample[j]:
                 i -= 1
@@ -97,7 +98,10 @@ for sample_index in range(sample_number):
                 i -= 1
                 j -= 1
             xrd_peak.append(sample[i:j+1])
-        window.append([i, j])
+        if i >= 0 and j >= 0 and i < feature_number and j < feature_number:
+            window.append([i, j])
+        else:
+            window.append([i, j])
 
 threshold = 0.0005
 x = two_theta[start:end+1]
@@ -138,7 +142,7 @@ result_evaluation(label, prediction)
 # precision_recall_curve(label, prediction)
 
 # save result into a csv file
-with open('../result/result.csv', 'w') as csv_file:
+with open('../result/result.csv', 'w', newline='') as csv_file:
     spamwriter = csv.writer(csv_file)
     for sample_index in range(sample_number):
         if label[sample_index] == prediction[sample_index]:
@@ -147,38 +151,39 @@ with open('../result/result.csv', 'w') as csv_file:
             spamwriter.writerow([label[sample_index], prediction[sample_index], "error"])
 
 # Prepare data for deep learning input
-x_data = np.empty([len(prediction), 100, 100])
-y_data = np.empty(len(prediction))
+x_data = np.empty([len(cnn_set), 100, 100])
+y_data = np.empty(len(cnn_set))
 current_index = 0
 for sample_index in range(sample_number):
     fig = plt.figure(figsize=(1,1))
     plt.axis('off')
     plt.xlim(xmin=two_theta[window[sample_index]][0], xmax=two_theta[window[sample_index]][1])
     plt.plot(two_theta[window[sample_index][0]:window[sample_index][1] + 1], xrd_peak[sample_index], 'k')
-    plt.savefig("/home/zheng/Desktop/figure0320/" + str(sample_index + 1) + '.png', format="png")
+    plt.savefig("./figure/" + str(sample_index + 1) + '.png', format="png")
     plt.close()
     if label[sample_index] == 0 or label[sample_index] == 1:
         y_data[current_index] = label[sample_index]
-        img = imread("/home/zheng/Desktop/figure0320/" + str(sample_index + 1) + '.png', mode='P')
+        img = imread("./figure/" + str(sample_index + 1) + '.png', mode='P')
         # img = imresize(img,(100,100))
         # img = np.reshape(img, 10000)
         x_data[current_index] = img
         current_index += 1
 x_data = x_data.astype(np.uint8)
 y_data = y_data.astype(np.uint8)
-np.save("../data/x_data.npy", x_data)
-np.save("../data/y_data.npy", y_data)
+np.save("../data/x_data_new.npy", x_data)
+np.save("../data/y_data_new.npy", y_data)
 
-## plot all samples
-# for sample in range(sample_number):
-#     plt.figure(figsize = (9,6), dpi = 300)
+# # plot all samples
+# for sample in range(0, sample_number):
+#     plt.figure()
+#     # plt.figure(figsize = (9,6), dpi = 300)
 #     plt.subplot(211)
 #     plt.title('sample ' + str(sample + 1) + ' category ' + str(label[sample]))
 #     # this is the background samples
-#     if sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
-#         plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
-#     else:
-#         plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
+#     # if sample in [184, 207, 208, 231, 232, 255, 278, 301, 324]:
+#     #     plt.axis([two_theta[0], two_theta[feature_number - 1], 0, 1000])
+#     # else:
+#     #     plt.axis([two_theta[0], two_theta[feature_number - 1], 450, 2400])
 #     plt.plot(two_theta, xrd[sample])
 #     plt.scatter([two_theta[window[sample][0]], two_theta[window[sample][1]]], [xrd[sample][window[sample][0]], xrd[sample][window[sample][1]]])
 #     plt.subplot(212)
@@ -186,7 +191,7 @@ np.save("../data/y_data.npy", y_data)
 #     plt.plot(two_theta[window[sample][0]:window[sample][1]+1], xrd_peak[sample])
 #     plt.scatter([two_theta[window[sample][2]], two_theta[window[sample][3]], two_theta[window[sample][4]]], [xrd[sample][window[sample][2]], xrd[sample][window[sample][3]], xrd[sample][window[sample][4]]])
 #     plt.title('sample ' + str(sample + 1) + ' category ' + str(prediction[sample]) + " k " + str(curvature[sample]))
-#     plt.savefig("/home/zheng/Desktop/figure0216/" + str(sample + 1) + '.png', format="png", dpi=200)
-#     # plt.savefig("D:/xiong/Desktop/figure0215/" + str(sample + 1) + '.png', format="png", dpi=200)
+#     # plt.savefig("/home/zheng/Desktop/figure0216/" + str(sample + 1) + '.png', format="png", dpi=200)
+#     plt.savefig("D:/xiong/Desktop/figure0418/" + str(sample + 1) + '.png', format="png", dpi=200)
 #     plt.close()
-# std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
+# # # std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)

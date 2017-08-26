@@ -6,6 +6,7 @@ Gets to 99.25% test accuracy after 12 epochs
 
 from __future__ import print_function
 import keras
+import keras.utils.vis_utils
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -17,14 +18,15 @@ from sklearn.model_selection import train_test_split
 seed = 7
 np.random.seed(seed)
 
-batch_size = 20
+batch_size = 15
 num_classes = 2
-epochs = 15
+epochs = 30
 
 # input image dimensions
 img_rows, img_cols = 100, 100
 
 x_data = np.load("../data/x_data.npy")
+x_data_test = np.load("../data/x_data_new.npy")
 y_data = np.load("../data/y_data.npy")
 print(x_data.size)
 print(x_data[0].size)
@@ -32,9 +34,11 @@ print(y_data.size)
 
 if K.image_data_format() == 'channels_first':
     x_data = x_data.reshape(x_data.shape[0], 1, img_rows, img_cols)
+    x_data_test = x_data_test.reshape(x_data_test.shape[0], 1, img_rows, img_cols)
     input_shape = (1, img_rows, img_cols)
 else:
     x_data = x_data.reshape(x_data.shape[0], img_rows, img_cols, 1)
+    x_data_test = x_data_test.reshape(x_data_test.shape[0], img_rows, img_cols, 1)
     input_shape = (img_rows, img_cols, 1)
 
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=seed)
@@ -71,6 +75,15 @@ model.fit(x_train, y_train, validation_data=(x_test, y_test), batch_size=batch_s
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-model.save('my_model.h5')
-output = model.predict(x_data)
-print(np.argmax(output, axis=1))
+model.save('my_model.h5py')
+# output1 = model.predict(x_data)
+# output1 = np.argmax(output1, axis=1)
+# for i in output1:
+#     print(i)
+
+print("test")
+
+output2 = model.predict(x_data_test)
+output2 = np.argmax(output2, axis=1)
+for i in output2:
+    print(i)
