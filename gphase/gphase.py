@@ -1,13 +1,13 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.colors
-import gphase.phase_module
+import phase_module
 import argparse
 # import matlab.engine
 import os
 from argparse import RawTextHelpFormatter
 import numpy as np
-from .peakdetect import *
+import peakdetect
 import warnings
 import copy
 
@@ -20,10 +20,10 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     parser = argparse.ArgumentParser(description="GPhase--An XRD Phase Mapping Program.\n University of South Carolina",
                 formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/FePdGa_XRD.csv')
-    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/FePdGa_composition.csv')
+    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/AlCuMo_XRD_600.csv')
+    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/AlCuMo_composition_600.csv')
     parser.add_argument('-k', "--K", dest='K', help='threshold for merging phases (default:1.5)', type=float, default=1.5)
-    parser.add_argument('-b', '--background', dest='if_background_subtraction', help='background subtraction', type=int, default=0)
+    parser.add_argument('-b', '--background', dest='if_background_subtraction', help='background subtraction', type=int, default=1)
     # parser.add_argument('-v', "--version")
     args = parser.parse_args()
 

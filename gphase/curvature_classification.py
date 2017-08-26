@@ -30,7 +30,7 @@ plt.plot(two_theta[1:-2], std[1:-2])
 plt.show()
 
 # Background subtraction by curve fitting
-std = back_sub(std, neighbor=2, threshold=0.5, fitting_degree=50, if_plot=0, two_theta=two_theta)
+std = back_sub(std, neighbor=2, threshold=0.9, fitting_degree=50, if_plot=0, two_theta=two_theta)
 
 # Make value less than 0 as 0
 for i in range(feature_number):
@@ -71,26 +71,33 @@ xrd_peak = []
 
 # Adjust the window location to the center of the peak
 for sample_index in range(sample_number):
-    sample = xrd[sample_index]
     i = start
     j = end
-    if sample[i] > sample[j]:
-        while sample[i] > sample[j]:
-            i -= 1
-            j -= 1
-        if abs(sample[i + 1] - sample[j + 1]) < abs(sample[i] - sample[j]):
-            i += 1
-            j += 1
-        xrd_peak.append(sample[i:j+1])
+    peak_loc = np.argmax(xrd[sample_index][i:j+1]) + i
+    sample = xrd[sample_index]
+    if peak_loc - i > 5 and j - peak_loc > 5:
+        xrd_peak.append(sample[peak_loc - (j - i) // 2:peak_loc + (j - i) // 2 + 1])
+        window.append([peak_loc - (j - i) // 2, peak_loc + (j - i) // 2])
+
     else:
-        while sample[i] < sample[j]:
-            i += 1
-            j += 1
-        if abs(sample[i - 1] - sample[j - 1]) < abs(sample[i] - sample[j]):
-            i -= 1
-            j -= 1
-        xrd_peak.append(sample[i:j+1])
-    window.append([i, j])
+
+        if sample[i] > sample[j]:
+            while sample[i] > sample[j]:
+                i -= 1
+                j -= 1
+            if abs(sample[i + 1] - sample[j + 1]) < abs(sample[i] - sample[j]):
+                i += 1
+                j += 1
+            xrd_peak.append(sample[i:j+1])
+        else:
+            while sample[i] < sample[j]:
+                i += 1
+                j += 1
+            if abs(sample[i - 1] - sample[j - 1]) < abs(sample[i] - sample[j]):
+                i -= 1
+                j -= 1
+            xrd_peak.append(sample[i:j+1])
+        window.append([i, j])
 
 threshold = 0.0005
 x = two_theta[start:end+1]
