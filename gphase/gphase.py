@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors
 import phase_module
 import argparse
-import matlab.engine
+# import matlab.engine
 import os
 from argparse import RawTextHelpFormatter
 import numpy as np
@@ -20,20 +20,21 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     parser = argparse.ArgumentParser(description="GPhase--An XRD Phase Mapping Program.\n University of South Carolina",
                 formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/FePdGa_XRD.csv')
-    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/FePdGa_composition.csv')
+    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/AlCuMo_XRD_long300.csv')
+    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/AlCuMo_composition_long300.csv')
     parser.add_argument('-k', "--K", dest='K', help='threshold for merging phases (default:1.5)', type=float, default=1.5)
-    parser.add_argument('-b', '--background', dest='if_background_subtraction', help='background subtraction', type=int, default=0)
+    parser.add_argument('-b', '--background', dest='if_background_subtraction', help='background subtraction', type=int, default=1)
     # parser.add_argument('-v', "--version")
     args = parser.parse_args()
 
     # execute MATLAB peak finder code
     if args.if_background_subtraction == 0:
-        eng = matlab.engine.start_matlab()
-        bin_path = os.path.dirname(os.path.realpath(__file__))
-        eng.cd(bin_path, nargout=0)
-        print("finding peaks... takes a few minutes...")
-        xrd_peak_path = eng.peakfinder(args.xrd, nargout=1)
+        pass
+        # eng = matlab.engine.start_matlab()
+        # bin_path = os.path.dirname(os.path.realpath(__file__))
+        # eng.cd(bin_path, nargout=0)
+        # print("finding peaks... takes a few minutes...")
+        # xrd_peak_path = eng.peakfinder(args.xrd, nargout=1)
     else:
         xrd_peak_path = args.xrd
         print("calculating...")
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     len_truth = max(label)
     len_predicted = max(prediction)
     [figure, tax] = phase_module.ternary_figure(ternary_data)
-    tax.scatter(original_comp, marker='o', c=label, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet)
+    tax.scatter(original_comp, marker='o', c=label, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor='w')
     tax.savefig("../result/" + "labeled.png", format="png")
     # tax.show()
 
