@@ -281,6 +281,10 @@ def result_evaluation(label, prediction):
             if prediction[i] == prediction[j]:
                 classify += 1
     # Calculate precision and recall
+    print("tp = %f" % tp)
+    print("tn = %f" % tn)
+    print("fp = %f" % fp)
+    print("fn = %f" % fn)
     print "precision = %f" % (tp / (tp + fp))
     print "recall = %f" % (tp / (tp + fn))
     print "accuracy = %f" % ((tp + tn) / (tp + tn + fp + fn))
