@@ -40,6 +40,12 @@ if __name__ == "__main__":
 
     # read data
     [xrd, two_theta, composition, label] = phase_module.read_data(xrd_peak_path, args.comp)
+
+    for row in composition:
+        temp = row[0]
+        row[0] = row[2]
+        row[2] = temp
+
     sample_number = len(xrd)
     feature_number = len(xrd[0])
 
@@ -221,12 +227,20 @@ if __name__ == "__main__":
     len_truth = max(label)
     len_predicted = max(prediction)
     [figure, tax] = phase_module.ternary_figure(ternary_data)
-    tax.scatter(original_comp, marker='o', c=label, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet)
+    tax.scatter(original_comp, marker='o', c=label, s=50, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor="w")
+    # for i in range(len(label)):
+    #     if int(label[i]) != 1:
+    #         tax.annotate(int(label[i]), original_comp[i])
+
     tax.savefig("../figure/" + "labeled.png", format="png")
     # tax.show()
 
     [figure, tax] = phase_module.ternary_figure(ternary_data)
-    tax.scatter(original_comp, marker='o', c=prediction, s=30, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet)
+    tax.scatter(original_comp, marker='o', c=prediction, s=50, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor='w')
+    # for i in range(len(prediction)):
+    #     if int(prediction[i]) != 1:
+    #         tax.annotate(int(prediction[i]), original_comp[i])
+
     tax.savefig("../figure/" + "prediction.png", format="png")
     # tax.show()
 
