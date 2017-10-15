@@ -72,29 +72,38 @@ def back_sub(data, neighbor, threshold, fitting_degree, if_plot, two_theta=None)
 
     if if_plot != 0:
         # Original figure
-        plt.figure(dpi=150)
+        # plt.figure(dpi=150)
+        f = plt.figure()
+        plt.plot(range(10), range(10), "o")
         plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         plt.ylabel(r'$Intensity$', fontsize=20)
-        plt.plot(two_theta, data)
+        plt.plot(two_theta, data, color='b')
         plt.xlim(two_theta[0], two_theta[-1])
-        # plt.savefig('', format='png')
+        plt.ylim(500, 800)
+        f.show()
+        f.savefig("../figure/figure3(a).pdf")
+
         # diff figure with scattered interest point
-        plt.figure(dpi=150)
+        f = plt.figure()
+        plt.plot(range(10), range(10), "o")
         plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         plt.ylabel(r'$Diff\,Intensity$', fontsize=20)
-        plt.plot(two_theta, y_diff)
+        plt.plot(two_theta, y_diff, color='b')
         plt.xlim(two_theta[0], two_theta[-1])
         for i in range(len(x)):
             plt.scatter(two_theta[x[i]], y_diff[x[i]], s=15, marker='.', color='red')
-        # plt.savefig('g', format='png')
+        f.savefig("../figure/figure3(b).pdf")
+
         # Original figure with scattered interest point
-        plt.figure(dpi=150)
+        f = plt.figure()
+        plt.plot(range(10), range(10), "o")
         plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         plt.ylabel(r'$Intensity$', fontsize=20)
-        plt.plot(two_theta, data)
+        plt.plot(two_theta, data, color='b')
         plt.xlim(two_theta[0], two_theta[-1])
+        plt.ylim(500, 800)
         plt.scatter(x_twotheta, y, s=15, marker='.', color='red')
-        # plt.savefig('', format='png')
+        f.savefig("../figure/figure3(c).pdf")
 
     # Polynomial fit, p will be the polynomial function
     x = np.array(x)
@@ -117,7 +126,8 @@ def back_sub(data, neighbor, threshold, fitting_degree, if_plot, two_theta=None)
     # plot or not
     if if_plot != 0:
         #plt.scatter(x,y)
-        plt.figure(dpi=150)
+        f = plt.figure()
+        plt.plot(range(10), range(10), "o")
         plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         plt.ylabel(r'$Intensity$', fontsize=20)
         x1 = 0 + 20
@@ -126,7 +136,7 @@ def back_sub(data, neighbor, threshold, fitting_degree, if_plot, two_theta=None)
         plt.plot(x_twotheta, p(x), color='red', linewidth=1.5)
         plt.plot(two_theta[x1:x2], data[x1:x2], color='green', linewidth=1.5)
         plt.xlim(two_theta[x1], two_theta[x2-1])
-        # plt.savefig('', format='png')
+        f.savefig("../figure/figure3(d).pdf")
         plt.close()
 
     return data
@@ -191,12 +201,13 @@ def ternary_figure(ternary_data):
     figure, tax = ternary_axes_subplot.figure(scale=scale)
     tax.boundary(linewidth=1.5)
     tax.gridlines(multiple=20, color="blue")
-    tax.left_axis_label(text_content[0], fontsize=font_size, offset = 0.12)
-    tax.right_axis_label(text_content[1], fontsize=font_size, offset = 0.12)
-    tax.bottom_axis_label(text_content[2], fontsize=font_size, offset = -0.02)
-    tax.ticks(axis='l', ticks=["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], offset=0.022)
-    tax.ticks(axis='b', ticks=["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], offset=0.022)
-    tax.ticks(axis='r', ticks=["0.0", "0.2", "0.4", "0.6", "0.8", "1.0"], offset=0.022)
+    # tax.set_title("Simplex Boundary and Gridlines")
+    tax.left_axis_label("Al (at.%)", fontsize=font_size, offset = 0.12)
+    tax.right_axis_label("Cu (at.%)", fontsize=font_size, offset = 0.12)
+    tax.bottom_axis_label("Mo (at.%)", fontsize=font_size, offset = -0.02)
+    tax.ticks(axis='l', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='b', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='r', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
     tax.clear_matplotlib_ticks()
     return [figure, tax]
    

@@ -1,8 +1,11 @@
 import sys
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import matplotlib.colors
 import phase_module
 import argparse
+import ternary
+# from ternary import ternary_axes_subplot, helpers
 # import matlab.engine
 import os
 from argparse import RawTextHelpFormatter
@@ -20,8 +23,8 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     parser = argparse.ArgumentParser(description="GPhase--An XRD Phase Mapping Program.\n University of South Carolina",
                 formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/AlCuMo_XRD_600.csv')
-    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/AlCuMo_composition_600.csv')
+    parser.add_argument('-x', '--xrd', dest='xrd', help='x-ray diffraction csv file', default='../data/AlCuMo_XRD_long300.csv')
+    parser.add_argument('-c', '--comp', dest='comp', help='composition csv file', default='../data/AlCuMo_composition_long300.csv')
     parser.add_argument('-k', "--K", dest='K', help='threshold for merging phases (default:1.5)', type=float, default=1.5)
     parser.add_argument('-b', '--background', dest='if_background_subtraction', help='background subtraction', type=int, default=1)
     # parser.add_argument('-v', "--version")
@@ -73,10 +76,51 @@ if __name__ == "__main__":
     # Plot Delaunay triangulation
     position = None
     scale = 100.0
-    font_size = 20
-    text_content = ["(at.%)", "(at.%)", "(at.%)"]
+    font_size = 15
+    text_content = ["Al (at.%)", "Cu (at.%)", "Mo (at.%)"]
     text_position = [(0,-7.5,107.5), (102.5,-7.5,5), (-5,102,3)]
     ternary_data = [scale, position, font_size, text_content]
+
+    f = plt.figure()
+    plt.plot(range(10), range(10), "o")
+    temp, (ax1, ax2) = plt.subplots(1, 2)
+    # ax = f.add_subplot(121)
+    tax = ternary.TernaryAxesSubplot(ax=ax1)
+    tax.boundary(linewidth=1.5)
+    tax.gridlines(multiple=20, color="blue")
+    # tax.set_title("Simplex Boundary and Gridlines")
+    tax.left_axis_label("Al (at.%)", fontsize=font_size, offset=0.12)
+    tax.right_axis_label("Cu (at.%)", fontsize=font_size, offset=0.12)
+    tax.bottom_axis_label("Mo (at.%)", fontsize=font_size, offset=-0.02)
+    tax.ticks(axis='l', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='b', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='r', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.scatter(original_comp, marker='o', edgecolor='w', s=40, color='red')
+    # tax.clear_matplotlib_ticks()
+
+    tax = ternary.TernaryAxesSubplot(ax=ax2)
+    tax.boundary(linewidth=1.5)
+    tax.gridlines(multiple=20, color="blue")
+    tax.scatter(original_comp, marker='o', edgecolor='w', s=40, color='red')
+    # tax.set_title("Simplex Boundary and Gridlines")
+    tax.left_axis_label("Al (at.%)", fontsize=font_size, offset=0.12)
+    tax.right_axis_label("Cu (at.%)", fontsize=font_size, offset=0.12)
+    tax.bottom_axis_label("Mo (at.%)", fontsize=font_size, offset=-0.02)
+    tax.ticks(axis='l', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='b', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+    tax.ticks(axis='r', ticks=["0", "20", "40", "60", "80", "100"], offset=0.022)
+
+    # tax.clear_matplotlib_ticks()
+
+
+
+
+
+
+
+    tax.show()
+    # Plot neighbor figure
+
     # for data in [neighbor_list_original, neighbor_list]:
     #     [figure, tax] = phase_module.ternary_figure(ternary_data)
     #     tax.scatter(original_comp, marker='o', edgecolor='w', s=40, color='red')
@@ -85,8 +129,10 @@ if __name__ == "__main__":
     #         tax.line(p1=(composition[row[0]][0],composition[row[0]][1],composition[row[0]][2]), p2=(composition[row[1]][0],composition[row[1]][1],composition[row[1]][2]))
     #     plt.show()
     #     tax.close()
+    #     tax.savefig("../figure/figure2.pdf")
 
-    if args.if_background_subtraction != 0:
+
+    if args.if_background_subtraction != 1:
         # calculate deviation
         std = np.std(xrd.tolist(), axis=0)
         std = std.tolist()
@@ -139,7 +185,7 @@ if __name__ == "__main__":
                 filter_list[filter_area[0]:(filter_area[1] + 1)] = [1] * (filter_area[1] - filter_area[0] + 1)
         std_peak = [a * b for a, b in zip(std, filter_list)]
 
-        # Plot std figure before and after peak filter
+        # # Plot std figure before and after peak filter
         # plt.subplot(211)
         # plt.plot(two_theta, std)
         # plt.xlim(two_theta[0], two_theta[-1])
@@ -155,21 +201,26 @@ if __name__ == "__main__":
         # plt.show()
         # plt.close()
 
-        # Plot std figure after filter and filter figure
-        # plt.figure(dpi=150)
+        # # Plot std figure after filter and filter figure
+        # f = plt.figure()
+        # plt.plot(range(10), range(10), "o")
         # plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         # plt.ylabel(r'$Intensity$', fontsize=20)
-        # plt.plot(two_theta, std_peak)
+        # plt.plot(two_theta, std_peak, color='b')
         # plt.xlim(two_theta[0], two_theta[-1])
-        # plt.savefig('5-3.png', format='png')
+        # # plt.savefig('5-3.png', format='png')
+        # f.savefig("../figure/figure5(c).pdf")
         # plt.close()
-        # plt.figure(dpi=150)
+        #
+        # f = plt.figure()
+        # plt.plot(range(10), range(10), "o")
         # plt.xlabel(r'$2\theta\,Angle (Deg.)$', fontsize=20)
         # plt.ylabel(r'$Intensity$', fontsize=20)
-        # plt.plot(two_theta, filter_list)
+        # plt.plot(two_theta, filter_list, color='b')
         # plt.xlim(two_theta[0], two_theta[-1])
         # plt.ylim(-0.2, 2.0)
-        # plt.savefig('5-4.png', format='png')
+        # # plt.savefig('5-4.png', format='png')
+        # f.savefig("../figure/figure5(d).pdf")
         # plt.close()
 
         # apply filter to each samples
@@ -223,6 +274,8 @@ if __name__ == "__main__":
     # Evaluate results
     phase_module.result_evaluation(label, prediction)
 
+    print(prediction)
+
     # Plot results
     len_truth = max(label)
     len_predicted = max(prediction)
@@ -230,18 +283,20 @@ if __name__ == "__main__":
     tax.scatter(original_comp, marker='o', c=label, s=50, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor="w")
     # for i in range(len(label)):
     #     if int(label[i]) != 1:
-    #         tax.annotate(int(label[i]), original_comp[i])
-
-    tax.savefig("../figure/" + "labeled.png", format="png")
+    #         tax.annotate(int(label[i]), original_comp[i], fontsize=8)
+    plt.show()
+    tax.close()
+    tax.savefig("../figure/figure7(a).pdf")
     # tax.show()
 
-    [figure, tax] = phase_module.ternary_figure(ternary_data)
-    tax.scatter(original_comp, marker='o', c=prediction, s=50, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor='w')
-    # for i in range(len(prediction)):
-    #     if int(prediction[i]) != 1:
-    #         tax.annotate(int(prediction[i]), original_comp[i])
-
-    tax.savefig("../figure/" + "prediction.png", format="png")
-    # tax.show()
+    # [figure, tax] = phase_module.ternary_figure(ternary_data)
+    # tax.scatter(original_comp, marker='o', c=prediction, s=50, norm=matplotlib.colors.LogNorm(), cmap=plt.cm.jet, edgecolor='w')
+    # # for i in range(len(prediction)):
+    # #     if int(prediction[i]) != 1:
+    # #         tax.annotate(int(prediction[i]), original_comp[i], fontsize=8)
+    # plt.show()
+    # tax.close()
+    # tax.savefig("../figure/figure7(c).pdf")
+    # # tax.show()
 
     print("Calculation finished.")
